@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Google Analytics Campaign Tracking Example</title>
+  <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    #hidden { margin: 10px 0 20px; }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="page-header">
+      <h1>Google Analytics Campaign Tracking Example</h1>
+    </div>
+    <form id="example" role="form">
+      <div class="form-group">
+        <label for="exampleUA">Google Analytics Account Code (UA-XXXXX-X)</label>
+        <input type="text" class="form-control" placeholder="UA-XXXXX-X - Must be working domain and UA account to test" id="exampleUA">
+      </div>
+        <div class="form-group">
+        <a href="#" class="btn btn-sm btn-info loadGA">Load GA</a>
+      </div>
+      <div class="row">
+        <div class="col-sm-6">
+          <div class="form-group">
+            <label for="exampleFirstName">First Name</label>
+            <input type="text" class="form-control" id="exampleFirstName">
+          </div>
+        </div>
+        <div class="col-sm-6">
+          <div class="form-group">
+            <label for="exampleLastName">Last Name</label>
+            <input type="text" class="form-control" id="exampleLastName">
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-6">
+          <div class="form-group">
+            <label for="exampleEmailAddress">Email Address</label>
+            <input type="text" class="form-control" id="exampleEmailAddress">
+          </div>
+        </div>
+        <div class="col-sm-6">
+          <div class="form-group">
+            <label for="exampleCompanyName">Company Name</label>
+            <input type="text" class="form-control" id="exampleCompanyName">
+          </div>
+        </div>
+      </div>
+
+      <div class="panel-group" id="hidden">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h4 class="panel-title">
+              <a class="accordion-toggle" data-toggle="collapse" data-parent="#hidden" href="#hiddenFields">
+                Hidden Fields
+              </a>
+            </h4>
+          </div>
+          <div id="hiddenFields" class="panel-collapse collapse">
+            <div class="panel-body">
+              <h4>These values have been read from the GA cookie and will be submitted:</h4>
+              <div class="row">
+                <div class="col-sm-4">
+                  <div class="form-group">
+                    <label>Landing Page</label>
+                    <input type="hidden" class="form-control" name="gaLandingPage">
+                  </div>
+                </div>
+                <div class="col-sm-4">
+                  <div class="form-group">
+                    <label>GA Source</label>
+                    <input type="hidden" class="form-control" name="gaSource">
+                  </div>
+                </div>
+                <div class="col-sm-4">
+                  <div class="form-group">
+                    <label>GA Medium</label>
+                    <input type="hidden" class="form-control" name="gaCamMed">
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-sm-4">
+                  <div class="form-group">
+                    <label>GA Campaign Name</label>
+                    <input type="hidden" class="form-control" name="gaCamName">
+                  </div>
+                </div>
+                <div class="col-sm-4">
+                  <div class="form-group">
+                    <label>GA Keyword</label>
+                    <input type="hidden" class="form-control" name="gaCamKW">
+                  </div>
+                </div>
+                <div class="col-sm-4">
+                  <div class="form-group">
+                    <label>GA Content</label>
+                    <input type="hidden" class="form-control" name="gaCamContent">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div><!-- /.panel-group -->
+
+      <div class="form-group">
+        <button type="submit" class="btn btn-default">Submit</button>
+      </div>
+    </form>
+
+    <hr>
+
+    <h3>Example code for loading the hidden fields</h3>
+    <script src="https://gist.github.com/retlehs/6283518.js"></script>
+
+    <hr>
+
+    <p><a class="btn btn-lg btn-primary" href="https://github.com/shoretelsky/ga-campaign-tracking">View on GitHub</a></p>
+
+  </div><!-- /.container -->
+
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+  <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+  <script src="ga-cookie.js"></script>
+
+  <script>
+    var _gaq = _gaq || [];
+    $(document).ready(function() {
+      $('.loadGA').click(function(e) {
+        e.preventDefault();
+        // Google Analytics: change UA-XXXXX-X to be your site's ID
+        _gaq.push(['_setAccount', $('#exampleUA').val()]);
+        _gaq.push(['_setDomainName', 'none']);
+        _gaq.push(['_trackPageview']);
+        (function() {
+          var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+          ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+          var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+      });
+
+      $('#hidden').on('show.bs.collapse', function() {
+        gaCookie.getVisitData();
+        $('input[type="hidden"]').attr('type', 'text');
+      });
+    });
+  </script>
+</body>
+</html>
