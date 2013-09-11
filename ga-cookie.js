@@ -280,48 +280,72 @@ gaCookie.getFirstVisitTime = function(firstVisitFieldName) {
   if (typeof gaCookie.params.ftime == 'undefined') {
     gaCookie.readGACookies(gaCookie.domainName ? gaCookie.domainName : null);
   }
+  if(firstVisitFieldName){
   jQuery('input[name="'+ firstVisitFieldName +'"]').val(gaCookie.params.ftime);
+}else{
+  return gaCookie.params.ftime;
+}
 };
 
 gaCookie.getLastVisitTime = function(lastVisitFieldName) {
   if (typeof gaCookie.params.ltime == 'undefined') {
     gaCookie.readGACookies(gaCookie.domainName ? gaCookie.domainName : null);
   }
+  if(lastVisitFieldName){
   jQuery('input[name="'+ lastVisitFieldName +'"]').val(gaCookie.params.ltime);
+}else{
+  return gaCookie.params.ltime;
+}
 };
 
 gaCookie.getSessionStartTime = function(sessionVisitTimeFieldName) {
   if (typeof gaCookie.params.stime == 'undefined') {
     gaCookie.readGACookies(gaCookie.domainName ? gaCookie.domainName : null);
   }
+  if(sessionVisitTimeFieldName){
   jQuery('input[name="'+ sessionVisitTimeFieldName +'"]').val(gaCookie.params.stime);
+}else{
+  return gaCookie.params.stime;
+}
 };
 
 gaCookie.getSessionVisits = function(sessionVisitsFieldName) {
   if (typeof gaCookie.params.numSessions == 'undefined') {
     gaCookie.readGACookies(gaCookie.domainName ? gaCookie.domainName : null);
   }
+  if(sessionVisitsFieldName){
   jQuery('input[name="'+ sessionVisitsFieldName +'"]').val(gaCookie.params.numSessions);
+}else{
+  return gaCookie.params.numSessions;
+}
 };
 
 gaCookie.getNumberCampaigns = function(numberCampaignsFieldName) {
 if (typeof gaCookie.params.numCampaigns == 'undefined') {
     gaCookie.readGACookies(gaCookie.domainName ? gaCookie.domainName : null);
   }
+  if(numberCampaignsFieldName){
   jQuery('input[name="'+ numberCampaignsFieldName +'"]').val(gaCookie.params.numCampaigns);
+}else{
+  return gaCookie.params.numCampaigns;
+}
 };
 
 gaCookie.getGAVisitorID = function(gaVisitorIDFieldName){
 if (typeof gaCookie.params.visitorId == 'undefined') {
     gaCookie.readGACookies(gaCookie.domainName ? gaCookie.domainName : null);
   }
+  if(gaVisitorIDFieldName){
   jQuery('input[name="'+ gaVisitorIDFieldName +'"]').val(gaCookie.params.visitorId);
+}else{
+  return gaCookie.params.visitorId;
+}
 };
 
 // TODO: parse out Custom Variable values
 // Custom variables are not always persisted in the GA cookie. It depends on the custom variable's scope. The custom variable is accessible if it
 // is a session-level scoped custom variable.  Page-level scoe custom variables only appear during the page view where the custom variable was set. Visitor level custom variables are set one time and then tracked via the visitorID on the backend
-gaCookie.getSessionVisits = function(customVarNum, customVarFieldName) {
+gaCookie.getCustomVar = function(customVarNum, customVarFieldName) {
   if (typeof gaCookie.params.visitorId == 'undefined') {
     gaCookie.readGACookies(gaCookie.domainName ? gaCookie.domainName : null);
   }
@@ -331,7 +355,11 @@ gaCookie.getSessionVisits = function(customVarNum, customVarFieldName) {
   } catch(e) {
     custVarVal = '';
   }
+    if(customVarFieldName){
   jQuery('input[name="'+ customVarFieldName +'"]').val(custVarVal);
+  }else{
+  return custVarVal;
+}
 };
 
 // Utility Functions for getting, setting, testing, and deleting cookies
