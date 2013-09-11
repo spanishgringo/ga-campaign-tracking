@@ -27,7 +27,13 @@ If you do not modify the script you will need to ensure that your hidden fields 
   * `gaAdWordsID`: Google AdWords GACLID value - this is a value that can be used to later upload CRM conversion data back into AdWords.[https://support.google.com/adwords/answer/2998031] More information about uploading offline conversions into AdWords
 
 # Other values that can be accessed from the GA cookie
-
+  * `gaCookie.getFirstVisitTime([destinationFieldName])`: First Date/Time that this visitor came to your website
+  * `gaCookie.getLastVisitTime([destinationFieldName])`: Most recent Date/Time that this visitor came to your website
+  * `gaCookie.getSessionStartTime([destinationFieldName])`: Date/Time that current session started
+  * `gaCookie.getSessionVisits([destinationFieldName])`: Total number of sessions that this visitor has made to your site
+  * `gaCookie.getNumberCampaigns([destinationFieldName])`: Total number of different campaigns that this visitor has used to visit your site
+  * `gaCookie.getGAVisitorID([destinationFieldName])`: Unique GA Visitor ID
+  * `gaCookie.getCustomVar(customVarNum [, destinationFieldName])`: Custom variables are not always persisted in the GA cookie. It depends on the custom variable's scope. The custom variable is accessible if it is a session-level scoped custom variable.  Page-level scoe custom variables only appear during the page view where the custom variable was set. Visitor level custom variables are set one time and then tracked via the visitorID on the backend
 
 ## License
 
