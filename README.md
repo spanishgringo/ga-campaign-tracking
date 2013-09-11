@@ -24,7 +24,7 @@ If you do not modify the script you will need to ensure that your hidden fields 
   * `gaCamName`: Google Analytics Campaign Name (for Campaign Name to appear from Paid Search traffic you must manually tag your ad URLs, even for AdWords)
   * `gaCamKW`: Google Analytics Campaign Keyword (for KW to appear from Paid Search traffic you must manually tag your ad URLs, even for AdWords)
   * `gaCamContent`: Google Analytics Campaign Content (for Content to appear from Paid Search traffic you must manually tag your ad URLs, even for AdWords)
-  * `gaAdWordsID`: Google AdWords GACLID value - this is a value that can be used to later upload CRM conversion data back into AdWords.[https://support.google.com/adwords/answer/2998031] More information about uploading offline conversions into AdWords
+  * `gaAdWordsID`: Google AdWords GACLID value - this is a value that can be used to later upload CRM conversion data back into AdWords. [More information about uploading offline conversions into AdWords](https://support.google.com/adwords/answer/2998031)
 
 # Other values that can be accessed from the GA cookie
   * `gaCookie.getFirstVisitTime([destinationFieldName])`: First Date/Time that this visitor came to your website
