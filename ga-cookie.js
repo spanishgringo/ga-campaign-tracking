@@ -234,6 +234,7 @@ gaCookie.getVisitData = function() {
         jQuery('input[name="gaCamName"]').val(gaCookie.params.campaignname);
         jQuery('input[name="gaCamKW"]').val(gaCookie.params.campaignterm);
         jQuery('input[name="gaCamContent"]').val(gaCookie.params.campaigncontent);
+        jQuery('input[name="gaAdWordsID"]').val(gaCookie.params.utmgclid);
       } else {
         jQuery('input[name="gaSource"]').val(gaCookie.params.trafficsource);
         jQuery('input[name="gaCamMed"]').val(gaCookie.prefix + gaCookie.params.campaignmedium);
@@ -262,6 +263,7 @@ gaCookie.getVisitData = function() {
         jQuery('input[name="gaCamName"]').val(gaCookie.params.campaignname);
         jQuery('input[name="gaCamKW"]').val(gaCookie.params.campaignterm);
         jQuery('input[name="gaCamContent"]').val(gaCookie.params.campaigncontent);
+        jQuery('input[name="gaAdWordsID"]').val(gaCookie.params.utmgclid);
       } else {
         jQuery('input[name="gaSource"]').val(gaCookie.params.trafficsource);
         jQuery('input[name="gaCamMed"]').val(gaCookie.prefix + gaCookie.params.campaignmedium);

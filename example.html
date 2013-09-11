@@ -103,6 +103,14 @@
                   </div>
                 </div>
               </div>
+              <div class="row">
+                <div class="col-sm-4">
+                  <div class="form-group">
+                    <label>AdWords Click ID <span class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement="right" title="This field is only populated if you land on this page after clicking on an ad from AdWords"></span></label>
+                    <input type="hidden" class="form-control" name="gaAdWordsID">
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -131,6 +139,7 @@
   <script>
     var _gaq = _gaq || [];
     $(document).ready(function() {
+      $('.glyphicon-info-sign').tooltip();
       $('.loadGA').click(function(e) {
         e.preventDefault();
         // Google Analytics: change UA-XXXXX-X to be your site's ID
