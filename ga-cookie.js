@@ -280,66 +280,66 @@ gaCookie.getFirstVisitTime = function(firstVisitFieldName) {
   if (typeof gaCookie.params.ftime == 'undefined') {
     gaCookie.readGACookies(gaCookie.domainName ? gaCookie.domainName : null);
   }
-  if(firstVisitFieldName){
-  jQuery('input[name="'+ firstVisitFieldName +'"]').val(gaCookie.params.ftime);
-}else{
-  return gaCookie.params.ftime;
-}
+  if (firstVisitFieldName) {
+    jQuery('input[name="'+ firstVisitFieldName +'"]').val(gaCookie.params.ftime);
+  } else {
+    return gaCookie.params.ftime;
+  }
 };
 
 gaCookie.getLastVisitTime = function(lastVisitFieldName) {
   if (typeof gaCookie.params.ltime == 'undefined') {
     gaCookie.readGACookies(gaCookie.domainName ? gaCookie.domainName : null);
   }
-  if(lastVisitFieldName){
-  jQuery('input[name="'+ lastVisitFieldName +'"]').val(gaCookie.params.ltime);
-}else{
-  return gaCookie.params.ltime;
-}
+  if (lastVisitFieldName) {
+    jQuery('input[name="'+ lastVisitFieldName +'"]').val(gaCookie.params.ltime);
+  } else {
+    return gaCookie.params.ltime;
+  }
 };
 
 gaCookie.getSessionStartTime = function(sessionVisitTimeFieldName) {
   if (typeof gaCookie.params.stime == 'undefined') {
     gaCookie.readGACookies(gaCookie.domainName ? gaCookie.domainName : null);
   }
-  if(sessionVisitTimeFieldName){
+  if (sessionVisitTimeFieldName) {
   jQuery('input[name="'+ sessionVisitTimeFieldName +'"]').val(gaCookie.params.stime);
-}else{
-  return gaCookie.params.stime;
-}
+  } else {
+    return gaCookie.params.stime;
+  }
 };
 
 gaCookie.getSessionVisits = function(sessionVisitsFieldName) {
   if (typeof gaCookie.params.numSessions == 'undefined') {
     gaCookie.readGACookies(gaCookie.domainName ? gaCookie.domainName : null);
   }
-  if(sessionVisitsFieldName){
-  jQuery('input[name="'+ sessionVisitsFieldName +'"]').val(gaCookie.params.numSessions);
-}else{
-  return gaCookie.params.numSessions;
-}
+  if (sessionVisitsFieldName) {
+    jQuery('input[name="'+ sessionVisitsFieldName +'"]').val(gaCookie.params.numSessions);
+  } else {
+    return gaCookie.params.numSessions;
+  }
 };
 
 gaCookie.getNumberCampaigns = function(numberCampaignsFieldName) {
-if (typeof gaCookie.params.numCampaigns == 'undefined') {
+  if (typeof gaCookie.params.numCampaigns == 'undefined') {
     gaCookie.readGACookies(gaCookie.domainName ? gaCookie.domainName : null);
   }
-  if(numberCampaignsFieldName){
-  jQuery('input[name="'+ numberCampaignsFieldName +'"]').val(gaCookie.params.numCampaigns);
-}else{
-  return gaCookie.params.numCampaigns;
-}
+  if (numberCampaignsFieldName) {
+    jQuery('input[name="'+ numberCampaignsFieldName +'"]').val(gaCookie.params.numCampaigns);
+  } else {
+    return gaCookie.params.numCampaigns;
+  }
 };
 
-gaCookie.getGAVisitorID = function(gaVisitorIDFieldName){
-if (typeof gaCookie.params.visitorId == 'undefined') {
+gaCookie.getGAVisitorID = function(gaVisitorIDFieldName) {
+  if (typeof gaCookie.params.visitorId == 'undefined') {
     gaCookie.readGACookies(gaCookie.domainName ? gaCookie.domainName : null);
   }
-  if(gaVisitorIDFieldName){
-  jQuery('input[name="'+ gaVisitorIDFieldName +'"]').val(gaCookie.params.visitorId);
-}else{
-  return gaCookie.params.visitorId;
-}
+  if (gaVisitorIDFieldName) {
+    jQuery('input[name="'+ gaVisitorIDFieldName +'"]').val(gaCookie.params.visitorId);
+  } else {
+    return gaCookie.params.visitorId;
+  }
 };
 
 // TODO: parse out Custom Variable values
@@ -355,11 +355,11 @@ gaCookie.getCustomVar = function(customVarNum, customVarFieldName) {
   } catch(e) {
     custVarVal = '';
   }
-    if(customVarFieldName){
-  jQuery('input[name="'+ customVarFieldName +'"]').val(custVarVal);
-  }else{
-  return custVarVal;
-}
+  if (customVarFieldName) {
+    jQuery('input[name="'+ customVarFieldName +'"]').val(custVarVal);
+  } else {
+    return custVarVal;
+  }
 };
 
 // Utility Functions for getting, setting, testing, and deleting cookies
@@ -437,7 +437,7 @@ gaCookie.checkLP = function() {
   try {
     var cVarPos = document.cookie.search('gaCVarLP');
     if (cVarPos > -1) {
-        gaCookie.landingPage = gaCookie.getCookie('gaCVarLP', '');
+      gaCookie.landingPage = gaCookie.getCookie('gaCVarLP', '');
     } else {
       var lp = document.location.pathname;
       lp = lp.length > 124 ? lp.substr(lp.length - 124,124) : lp;
