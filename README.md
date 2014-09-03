@@ -35,6 +35,29 @@ If you do not modify the script you will need to ensure that your hidden fields 
   * `gaCookie.getGAVisitorID([destinationFieldName])`: Unique GA Visitor ID
   * `gaCookie.getCustomVar(customVarNum [, destinationFieldName])`: Custom variables are not always persisted in the GA cookie. It depends on the custom variable's scope. The custom variable is accessible if it is a session-level scoped custom variable.  Page-level scoe custom variables only appear during the page view where the custom variable was set. Visitor level custom variables are set one time and then tracked via the visitorID on the backend
 
+## FAQ
+* Q: Can you use this code with Universal Analytics (UA)?
+* A: UA does not support cookie based campaign tracking. Everything is done in the cloud.  However, you can run the traditional ga.js script in localservermode to take advantage of the cookie tracking.  Download a copy locally of ga.js and setup code that looks similar to this:
+```html
+<script>    
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', "UA-xxxxx-x"]);
+    _gaq.push(['_setDomainName', "YOURDOMAIN"]);
+    //place a blank 1x1 gif on your server with name __utm.gif
+    _gaq.push(['_setLocalGifPath', "//YOURDOMAIN/PATH/__utm.gif"]);
+    _gaq.push(['_setLocalServerMode']);
+
+    _gaq.push(['_trackPageview']);
+
+    (function() {var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+                   //ga.src = ('https:' == document.location.protocol ? 'https://' : 'http://') + 'stats.g.doubleclick.net/dc.js';
+                   //ga.src = ('https:' == document.location.protocol ? 'https://' : 'http://') + 'YOURDOMAIN/PATH/ga.js';
+                   var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);}
+                )();
+</script>
+```
+
+
 ## License
 
 MIT License
