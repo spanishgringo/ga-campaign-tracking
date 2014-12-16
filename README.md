@@ -4,9 +4,6 @@ Use this plugin to pull campaign and other data out of the Google Analytics cook
 
 Written and maintained by [Michael Freeman](https://twitter.com/spanishgringo) & [Ben Word](https://twitter.com/retlehs).
 
-* [http://www.shoretel.com/](http://www.shoretel.com/)
-* [http://www.shoretelsky.com/](http://www.shoretelsky.com/)
-
 # Usage
 
 * Place the `ga-cookie.js` script above your standard `ga.js` tracking code
