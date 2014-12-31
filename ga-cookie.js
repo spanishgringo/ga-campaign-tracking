@@ -1,34 +1,8 @@
 /* ========================================================================
  * gaCookie by Michael Freeman (@spanishgringo) & Ben Word (@retlehs)
- * https://github.com/ShoreTelSky/ga-campaign-tracking
+ * https://github.com/spanishgringo/ga-campaign-tracking
  * ========================================================================
- * Copyright (c) ShoreTel
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
- * this software and associated documentation files (the "Software"), to deal in
- * the Software without restriction, including without limitation the rights to
- * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
- * of the Software, and to permit persons to whom the Software is furnished to do
- * so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- *
- * Various components originally based on the following:
- *
- * http://adamv.com/dev/javascript/querystring
- * https://code.google.com/p/ga-vki-cookies/source/browse/trunk/gaVKICookies.js?r=18
- * http://cutroni.com/blog/2007/10/29/integrating-google-analytics-with-a-crm/
- * ======================================================================== */
-
+*/
 
 var gaCookie = gaCookie || {};
 
@@ -63,6 +37,18 @@ gaCookie.getDomainHash = function(strDomainName) {
   return fromGaJs_s(strDomainName);
 };
 
+
+function getQueryVar (v)
+{
+  var q = window.location.search.substring(1);
+  var vars = q.split("&");
+       for (var i=0;i<vars.length;i++) {
+               var set = vars[i].split("=");
+               if(set[0] == v){return set[1];}
+       }
+       return(false);
+}
+
 // This is called automatically by getVisitData. Only call this if you want to load each field manually.
 // This should not be run until you have already loaded GA and run the normal _trackPageview call to
 // ensure that it is using the most recent source/session data
@@ -79,6 +65,14 @@ try {
   // Check if Landing Page is already set and call it if not
   if (typeof gaCookie.landingPage == 'undefined') {
     gaCookie.checkLP();
+  }
+} catch(e) {
+
+}
+
+try{
+if (typeof gaCookie.adGroup == 'undefined') {
+    gaCookie.checkAdGroup();
   }
 } catch(e) {
 
@@ -192,84 +186,88 @@ try {
 // For example, if a user blocks javascript or cookies, then your form's hidden fields will be empty.
 // I recommend you name your fields as listed below. Otherwise, update the code to match the name of your hidden form fields
 
-// gaLandingPage
-// gaSource
-// gaCamMed
-// gaCamName
-// gaCamKW
-// gaCamContent
+// galandingpage
+// gasource
+// gamedium
+// gacampaign
+// gakeyword
+// gacontent
 
 // You will notice that depending on the medium's value, not all fields are submitted
 gaCookie.getVisitData = function() {
   gaCookie.readGACookies(gaCookie.domainName ? gaCookie.domainName : null);
   // Add values to form
   // Store the landing page from the session
-  jQuery('input[name="gaLandingPage"]').val(gaCookie.landingPage);
+  jQuery('input[name="galandingpage"]').val(gaCookie.landingPage);
+
+  // Store the ad group from the session, if any
+  jQuery('input[name="gaadgroup"]').val(gaCookie.adGroup);
+  
   // Store the GA cookie Data
   switch (gaCookie.params.campaignmedium) {
     case 'organic':
-      jQuery('input[name="gaSource"]').val(gaCookie.params.trafficsource);
-      jQuery('input[name="gaCamMed"]').val(gaCookie.prefix + 'organic');
-      jQuery('input[name="gaCamName"]').val('(organic)');
-      jQuery('input[name="gaCamKW"]').val(gaCookie.params.campaignterm);
+      jQuery('input[name="gasource"]').val(gaCookie.params.trafficsource);
+      jQuery('input[name="gamedium"],input[name="leadsource"]').val(gaCookie.prefix + 'organic');
+      jQuery('input[name="gacampaign"]').val('(organic)');
+      jQuery('input[name="gakeyword"]').val(gaCookie.params.campaignterm);
       break;
     case '(none)':
       // Direct visits
-      jQuery('input[name="gaSource"]').val('(direct)');
-      jQuery('input[name="gaCamMed"]').val(gaCookie.prefix + '(none)');
-      jQuery('input[name="gaCamName"]').val('(direct)');
+      jQuery('input[name="gasource"]').val('(direct)');
+      jQuery('input[name="gamedium"],input[name="leadsource"]').val(gaCookie.prefix + '(none)');
+      jQuery('input[name="gacampaign"]').val('(direct)');
       break;
     case 'referral':
-      jQuery('input[name="gaSource"]').val(gaCookie.params.trafficsource);
-      jQuery('input[name="gaCamMed"]').val(gaCookie.prefix + 'referral');
-      jQuery('input[name="gaCamName"]').val('(referral)');
-      jQuery('input[name="gaCamContent"]').val(gaCookie.params.campaigncontent);
+      jQuery('input[name="gasource"]').val(gaCookie.params.trafficsource);
+      jQuery('input[name="gamedium"],input[name="leadsource"]').val(gaCookie.prefix + 'referral');
+      jQuery('input[name="gacampaign"]').val('(referral)');
+      jQuery('input[name="gacontent"]').val(gaCookie.params.campaigncontent);
       break;
     case '(not set)':
       if (gaCookie.params.utmgclid) {
         // GA Adwords since it has gclid
-        jQuery('input[name="gaCamMed"]').val(gaCookie.prefix + 'cpc');
+        jQuery('input[name="gamedium"],input[name="leadsource"]').val(gaCookie.prefix + 'cpc');
         // These may need to be fixed because it depends on gclid on the backend
-        jQuery('input[name="gaSource"]').val(gaCookie.params.trafficsource);
-        jQuery('input[name="gaCamName"]').val(gaCookie.params.campaignname);
-        jQuery('input[name="gaCamKW"]').val(gaCookie.params.campaignterm);
-        jQuery('input[name="gaCamContent"]').val(gaCookie.params.campaigncontent);
-        jQuery('input[name="gaAdWordsID"]').val(gaCookie.params.utmgclid);
+        jQuery('input[name="gasource"]').val(gaCookie.params.trafficsource);
+        jQuery('input[name="gacampaign"]').val(gaCookie.params.campaignname);
+        jQuery('input[name="gakeyword"]').val(gaCookie.params.campaignterm);
+        jQuery('input[name="gacontent"]').val(gaCookie.params.campaigncontent);
+        jQuery('input[name="gaadwordsid"]').val(gaCookie.params.utmgclid);
       } else {
-        jQuery('input[name="gaSource"]').val(gaCookie.params.trafficsource);
-        jQuery('input[name="gaCamMed"]').val(gaCookie.prefix + gaCookie.params.campaignmedium);
-        jQuery('input[name="gaCamName"]').val(gaCookie.params.campaignname);
-        jQuery('input[name="gaCamKW"]').val(gaCookie.params.campaignterm);
-        jQuery('input[name="gaCamContent"]').val(gaCookie.params.campaigncontent);
+        jQuery('input[name="gasource"]').val(gaCookie.params.trafficsource);
+        jQuery('input[name="gamedium"],input[name="leadsource"]').val(gaCookie.prefix + gaCookie.params.campaignmedium);
+        jQuery('input[name="gacampaign"]').val(gaCookie.params.campaignname);
+        jQuery('input[name="gakeyword"]').val(gaCookie.params.campaignterm);
+        jQuery('input[name="gacontent"]').val(gaCookie.params.campaigncontent);
       }
       break;
       case undefined:
         // Referrer is same as host so referrer can't be source or there is no referrer
         if (document.referrer === "" || document.referrer.match(/\/\/(.+)\//)[1]==document.location.hostname) {
-          jQuery('input[name="gaSource"]').val("(not set)");
+          jQuery('input[name="gasource"]').val("(not set)");
         } else {
-          jQuery('input[name="gaSource"]').val(document.referrer.match(/\/\/(.+)\//)[1]);
+          jQuery('input[name="gasource"]').val(document.referrer.match(/\/\/(.+)\//)[1]);
         }
-        jQuery('input[name="gaCamMed"]').val(gaCookie.prefix + 'unknown');
-        jQuery('input[name="gaCamName"]').val('(not set)');
+        jQuery('input[name="gamedium"],input[name="leadsource"]').val(gaCookie.prefix + 'unknown');
+        jQuery('input[name="gacampaign"]').val('(not set)');
       break;
     default:
       // Assume it is a custom campaign and try to include everything
       if (gaCookie.params.utmgclid) {
         // GA Adwords since it has gclid
-        jQuery('input[name="gaCamMed"]').val(gaCookie.prefix + 'cpc');
+        jQuery('input[name="gamedium"],input[name="leadsource"]').val(gaCookie.prefix + 'cpc');
         // These may need to be fixed because it depends on gclid on the backend
-        jQuery('input[name="gaSource"]').val(gaCookie.params.trafficsource);
-        jQuery('input[name="gaCamName"]').val(gaCookie.params.campaignname);
-        jQuery('input[name="gaCamKW"]').val(gaCookie.params.campaignterm);
-        jQuery('input[name="gaCamContent"]').val(gaCookie.params.campaigncontent);
-        jQuery('input[name="gaAdWordsID"]').val(gaCookie.params.utmgclid);
+        jQuery('input[name="gasource"]').val(gaCookie.params.trafficsource);
+        jQuery('input[name="gacampaign"]').val(gaCookie.params.campaignname);
+        jQuery('input[name="gakeyword"]').val(gaCookie.params.campaignterm);
+        jQuery('input[name="gacontent"]').val(gaCookie.params.campaigncontent);
+        jQuery('input[name="gaadwordsid"]').val(gaCookie.params.utmgclid);
       } else {
-        jQuery('input[name="gaSource"]').val(gaCookie.params.trafficsource);
-        jQuery('input[name="gaCamMed"]').val(gaCookie.prefix + gaCookie.params.campaignmedium);
-        jQuery('input[name="gaCamName"]').val(gaCookie.params.campaignname);
-        jQuery('input[name="gaCamKW"]').val(gaCookie.params.campaignterm);
-        jQuery('input[name="gaCamContent"]').val(gaCookie.params.campaigncontent);
+        jQuery('input[name="gasource"]').val(gaCookie.params.trafficsource);
+        jQuery('input[name="gamedium"],input[name="leadsource"]').val(gaCookie.prefix + gaCookie.params.campaignmedium);
+        jQuery('input[name="gacampaign"]').val(gaCookie.params.campaignname);
+        jQuery('input[name="gakeyword"]').val(gaCookie.params.campaignterm);
+        jQuery('input[name="gacontent"]').val(gaCookie.params.campaigncontent);
       }
   }
 };
@@ -446,6 +444,48 @@ gaCookie.checkLP = function() {
     }
   } catch(e) { }
 };
+
+//function to check if adgroup is included in URL params.
+
+gaCookie.checkAdGroup = function() {
+  try {
+    var cVarPos = document.cookie.search('gaCVarAdGrp');
+    if (cVarPos > -1) {
+      gaCookie.landingPage = gaCookie.getCookie('gaCVarAdGrp', '');
+    } else {
+      var adGrp = getQueryVar('utm_adgroup');
+      if(adGrp){
+        adGrp = adGrp.length > 124 ? adGrp.substr(adGrp.length - 124,124) : adGrp;
+        gaCookie.set('gaCVarAdGrp', adGrp, this.domainName, '/', 0.5);
+        gaCookie.adGroup =adGrp;
+      }
+    }
+  } catch(e) { }
+};
+
+//function to lookup city, state and country automatically based on zip code.
+//only populates other fields if they are empty. non-destructive.
+gaCookie.processZip = function(){
+ try{
+   $("input[name='zip']").on("blur",function(){
+        if($("input[name='zip']").val().length==5){
+            $.getJSON("//api.zippopotam.us/us/"+$("input[name='zip']").val(),function(data){
+            console.log(data['post code']);
+            console.log(data['country abbreviation']);
+            console.log(data.places[0]['place name']);
+            console.log(data.places[0]['state abbreviation']);
+            
+            $("input[name='country']").val().length==0 ? (data['country abbreviation']) : '';
+            $("input[name='city']").val().length==0 ? $("input[name='city']").val(data.places[0]['place name']) : '';
+            $("input[name='state']").val().length==0 ? $("input[name='state']").val(data.places[0]['state abbreviation']) : '';
+          });
+        }
+    }); 
+ }
+ catch(e){
+ }
+};
+
 
 /* ========================================================================
  * Copyright (c) 2008, Adam Vandenberg
