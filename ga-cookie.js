@@ -463,21 +463,46 @@ gaCookie.checkAdGroup = function() {
   } catch(e) { }
 };
 
+//test for valid zip/postal codes
+function isValidPostalCode(postalCode, countryCode) {
+    switch (countryCode) {
+        case "US":
+            postalCodeRegex = /^([0-9]{5})(?:[-\s]*([0-9]{4}))?$/;
+            break;
+        case "CA":
+            postalCodeRegex = /^([A-Z][0-9][A-Z])\s*([0-9][A-Z][0-9])$/;
+            break;
+        default:
+            postalCodeRegex = /^(?:[A-Z0-9]+([- ]?[A-Z0-9]+)*)?$/;
+    }
+    return postalCodeRegex.test(postalCode);
+}
+
 //function to lookup city, state and country automatically based on zip code.
 //only populates other fields if they are empty. non-destructive.
 gaCookie.processZip = function(){
  try{
    $("input[name='zip']").on("blur",function(){
-        if($("input[name='zip']").val().length==5){
-            $.getJSON("//api.zippopotam.us/us/"+$("input[name='zip']").val(),function(data){
+        if($("input[name='zip']").val().length>0){
+            var jQXHR = $.getJSON("//api.zippopotam.us/us/"+$("input[name='zip']").val(),function(data){
             console.log(data['post code']);
             console.log(data['country abbreviation']);
             console.log(data.places[0]['place name']);
             console.log(data.places[0]['state abbreviation']);
-            
+            $('.zipError').remove();
+
+           // $("input[name='zip']").removeClass('invalid');
             $("input[name='country']").val().length==0 ? (data['country abbreviation']) : '';
             $("input[name='city']").val().length==0 ? $("input[name='city']").val(data.places[0]['place name']) : '';
             $("input[name='state']").val().length==0 ? $("input[name='state']").val(data.places[0]['state abbreviation']) : '';
+          }).fail(function(){
+            console.log("zip lookup error");
+          //  $("input[name='zip']").addClass('invalid');
+            if(!isValidPostalCode($("input[name='zip']").val())){
+                if($('.zipError').length==0){
+                    $("input[name='zip']").after("<span class='zipError' style='font-size:1.2rem;display:inline-block;padding:top:5px;'>Are you sure that's a zip code?</span>");
+                }
+            }
           });
         }
     }); 
