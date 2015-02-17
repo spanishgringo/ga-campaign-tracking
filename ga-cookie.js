@@ -500,7 +500,7 @@ gaCookie.processZip = function(){
           //  $("input[name='zip']").addClass('invalid');
             if(!isValidPostalCode($("input[name='zip']").val())){
                 if($('.zipError').length==0){
-                    $("input[name='zip']").after("<span class='zipError' style='font-size:1.2rem;display:inline-block;padding:top:5px;'>Are you sure that's a zip code?</span>");
+                    $("input[name='zip']").after("<span class='zipError' style='font-size:.85em;display:inline-block;padding-top:5px;'>Are you sure that's a zip code?</span>");
                 }
             }
           });
