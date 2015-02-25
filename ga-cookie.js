@@ -498,10 +498,20 @@ gaCookie.processZip = function(){
             $("input[name='country']").val().length==0 ? $("input[name='country']").val(data['country abbreviation']) : '';
             $("input[name='city']").val().length==0 ? $("input[name='city']").val(data.places[0]['place name']) : '';
             $("input[name='state']").val().length==0 ? $("input[name='state']").val(data.places[0]['state abbreviation']) : '';
+
+            // reset cookie lookup count
+            gaCookie.lookupCount = 0;
           }).fail(function(){
 
+            // if valid us postal code
             if( isValidPostalCode($("input[name='zip']").val(),'US') && gaCookie.lookupCount == 0 ) {
+              
+              // retry search after 500ms
               window.setTimeout(gaCookie.processZip, 500);
+
+              // increment lookup count (prevents users from getting caught in endless loop)
+              gaCookie.lookupCount++;
+              
             }/*
             console.log("zip lookup error");
             //  $("input[name='zip']").addClass('invalid');
