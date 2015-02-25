@@ -478,6 +478,9 @@ function isValidPostalCode(postalCode, countryCode) {
     return postalCodeRegex.test(postalCode);
 }
 
+// set a lookup count
+gaCookie.lookupCount = 0;
+
 //function to lookup city, state and country automatically based on zip code.
 //only populates other fields if they are empty. non-destructive.
 gaCookie.processZip = function(){
@@ -492,17 +495,21 @@ gaCookie.processZip = function(){
             $('.zipError').remove();
 
            // $("input[name='zip']").removeClass('invalid');
-            $("input[name='country']").val().length==0 ? (data['country abbreviation']) : '';
+            $("input[name='country']").val().length==0 ? $("input[name='country']").val(data['country abbreviation']) : '';
             $("input[name='city']").val().length==0 ? $("input[name='city']").val(data.places[0]['place name']) : '';
             $("input[name='state']").val().length==0 ? $("input[name='state']").val(data.places[0]['state abbreviation']) : '';
           }).fail(function(){
+
+            if( isValidPostalCode($("input[name='zip']").val(),'US') && gaCookie.lookupCount == 0 ) {
+              window.setTimeout(gaCookie.processZip, 500);
+            }/*
             console.log("zip lookup error");
-          //  $("input[name='zip']").addClass('invalid');
+            //  $("input[name='zip']").addClass('invalid');
             if(!isValidPostalCode($("input[name='zip']").val())){
                 if($('.zipError').length==0){
                     $("input[name='zip']").after("<span class='zipError' style='font-size:.85em;display:inline-block;padding-top:5px;'>Are you sure that's a zip code?</span>");
                 }
-            }
+            }*/
           });
         }
     }); 
