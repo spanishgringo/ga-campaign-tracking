@@ -532,10 +532,11 @@ gaCookie.processZip = function(){
 //override for local GA cookie values
 gaCookie.updateUTMZ = function(csr,cmd,ccn,ctr,cct){
 var newUTMZ = gaCookie.getCookie("__utmz");
+var nodes = newUTMZ.split("|");
   /* source */
   if(csr){  newUTMZ = newUTMZ.replace(/utmcsr=(.*?)\|/,"utmcsr=" + csr + "|" );}  
 /* medium */
-  if(cmd){  newUTMZ = newUTMZ.replace(/utmcmd=(.*?)\|/,"utmcmd=" + cmd + "|" );}
+  if(cmd){  newUTMZ = newUTMZ.replace(/(utmcmd=[\w\(\)\-_\+]*)\|?/,"utmcmd=" + cmd + (nodes.length <4 ? "" : "|") );}
 /* campaign */
   if(ccn){  newUTMZ = newUTMZ.replace(/utmccn=(.*?)\|/,"utmccn=" + ccn + "|" );}
 /* term */
