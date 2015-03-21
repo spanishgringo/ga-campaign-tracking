@@ -529,6 +529,23 @@ gaCookie.processZip = function(){
 };
 
 
+//override for local GA cookie values
+gaCookie.updateUTMZ = function(csr,cmd,ccn,ctr,cct){
+var newUTMZ = gaCookie.getCookie("__utmz");
+  /* source */
+  if(csr){  newUTMZ = newUTMZ.replace(/utmcsr=(.*?)\|/,"utmcsr=" + csr + "|" );}  
+/* medium */
+  if(cmd){  newUTMZ = newUTMZ.replace(/utmcmd=(.*?)\|/,"utmcmd=" + cmd + "|" );}
+/* campaign */
+  if(ccn){  newUTMZ = newUTMZ.replace(/utmccn=(.*?)\|/,"utmccn=" + ccn + "|" );}
+/* term */
+  if(ctr){  newUTMZ = newUTMZ.replace(/utmctr=(.*?)/,"utmctr=" + ctr  );}
+/* content */
+  if(cct){  newUTMZ = newUTMZ.replace(/utmcct=(.*?)/,"utmcct=" + cct  );}
+  gaCookie.set('__utmz', newUTMZ, this.domainName, '/', 4382);
+};
+
+
 /* ========================================================================
  * Copyright (c) 2008, Adam Vandenberg
  * All rights reserved.
