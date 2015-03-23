@@ -54,7 +54,7 @@
         <div class="col-sm-6">
           <div class="form-group">
             <label for="exampleCompanyZip">Company Zip</label>
-            <input type="text" class="form-control" id="exampleCompanyZip">
+            <input type="text" class="form-control" id="exampleCompanyZip" name="zip">
           </div>
         </div>
       </div>
@@ -119,9 +119,7 @@
                   </div>
                 </div>
               </div>
-            </div>
-          </div><!-- /.panel-collapse -->
-          <div id="hiddenFields" class="panel-collapse collapse">
+            </div><!-- /.panel-body -->
             <div class="panel-body">
               <h4>These values are populated through the zip code lookup:</h4>
               <div class="row">
@@ -167,6 +165,7 @@
 
   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
   <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/async/0.9.0/async.js"></script>
   <script src="ga-cookie.js"></script>
 
   <script>
@@ -190,6 +189,8 @@
         gaCookie.getVisitData();
         $('input[type="hidden"]').attr('type', 'text');
       });
+      // enable zip code lookup    
+      $("input[name='zip']").on("blur",function(){ gaCookie.processZipNew(); });
     });
   </script>
 </body>

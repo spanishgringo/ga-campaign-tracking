@@ -522,11 +522,160 @@ gaCookie.processZip = function(){
             }*/
           });
         }
-    }); 
+    });
  }
  catch(e){
  }
-};
+}
+
+//function to lookup city, state and country automatically based on zip code.
+//populates hidden fields on blur, will destroy any previously set value.
+gaCookie.processZipNew = function() {
+  try{
+    if($("input[name='zip']").val().length>0){
+
+      // call geoNames - YOU MUST CREATE YOUR OWN USERNAME IN PLACE OF THE CURRENT VALUE OF "DEMO"
+      $.getJSON("//api.geonames.org/postalCodeSearchJSON?postalcode="+$("input[name='zip']").val()+"&maxRows=10&username=demo", function(data) {
+
+        //console.log(data);
+
+        // if data not returned
+        if(typeof data == 'undefined' || typeof data.status != 'undefined') {
+
+          console.log('zip code lookup returned empty or invalid data...');
+
+          // only check 3 times
+          if(gaCookie.lookupCount<3) {
+
+            console.log('(' + (gaCookie.lookupCount+1) + ')reattempting zip code lookup...');
+
+            // retry search after 250ms
+            window.setTimeout(gaCookie.processZipNew, 250);
+
+            // increment lookup count (prevents users from getting caught in endless loop)
+            gaCookie.lookupCount++;
+
+          }
+
+        // if data returned
+        } else {
+
+          //console.log(data.postalCodes);
+          $('.zipError').remove();
+
+          // if only 1 result
+          if(data.postalCodes.length == 1) {
+
+            // update form fields            
+            $("input[name='country']").val(data.postalCodes[0]['countryCode']);
+            $("input[name='city']").val(data.postalCodes[0]['placeName']);
+            $("input[name='state']").val(data.postalCodes[0]['adminCode1']);
+          
+          // if more than 1 result
+          } else {
+
+            async.each(data.postalCodes, function(postalCode, callback) {
+
+              if(postalCode['countryCode']=='US') {
+                callback(postalCode);
+              } else callback();
+
+            }, function(isUS) {
+              // if US value was found
+              if(isUS) {
+                //console.log('us postal code value found');
+
+                // update form fields
+                $("input[name='country']").val(isUS['countryCode']);
+                $("input[name='city']").val(isUS['placeName']);
+                $("input[name='state']").val(isUS['adminCode1']);
+              // if no US value was found
+              } else {
+                //console.log('no us postal code value was found');
+
+                // if no modal already exists
+                if(!$('#zipModal').length) {
+                  // create bootstrap modal
+                  $('body').append(
+                    $('<div>').attr({'class': 'modal fade', 'id': 'zipModal', 'tabindex': '-1', 'role': 'dialog', 'aria-labelledby': 'zipModal', 'aria-hidden': 'true'}).append(
+                      $('<div>').attr({'class': 'modal-dialog'}).append(
+                        $('<div>').attr({'class': 'modal-content'}).append(
+                          $('<div>').attr({'class': 'modal-header'}).append(
+                            $('<button>').attr({'type': 'button','class':'close','data-dismiss':'modal','aria-label':'close'}).append(
+                                $('<span>').attr({'aria-hidden':'true'})
+                              ).html('&times;')
+                          ).append(
+                            $('<h4>').attr({'class': 'modal-title'}).text('Please pick a Location')
+                          )
+                        ).append(
+                          $('<div>').attr({'class': 'modal-body'}).append( $('<div>').attr({'class': 'list-group'}) )
+                        ).append(
+                          $('<div>').attr({'class':'modal-footer'}).append(
+                            $('<button>').attr({'type':'button','class':'btn btn-default','data-dismiss':'modal'}).text('Close')
+                          )
+                        )
+                      )
+                    )
+                  )
+                // if modal already exists
+                } else {
+                  // remove any existing items from the modal list
+                  $('#zipModal .modal-body .list-group').html('');
+                }
+
+                // loop data
+                $.each(data.postalCodes, function(i,pc) {
+                  // add in choices
+                  $('#zipModal .modal-body .list-group').append(
+                    $('<a>')
+                      .attr({'href':'javascript:;','class':'list-group-item','data-zip': JSON.stringify(pc) })
+                      .text( pc['placeName'] + ', ' + pc['adminCode1'] + ' ' + pc['countryCode']  )
+                      .on('click', function() {
+                        // get place data
+                        var placeData = $.parseJSON($(this).attr('data-zip'));
+                        // update form fields
+                        $("input[name='country']").val(placeData['countryCode']);
+                        $("input[name='city']").val(placeData['placeName']);
+                        $("input[name='state']").val(placeData['adminCode1']);
+                        // close modal
+                        $('#zipModal').modal('hide');
+                      })
+                  );
+                  // show the modal
+                  $('#zipModal').modal('show');
+                });
+              }
+            });
+
+          }
+
+        }
+
+
+      }).fail(function(){
+
+        console.log('jqxhr call failed...');
+
+        // try again - but only check 3 times
+        if(gaCookie.lookupCount<3) {
+
+          console.log('(' + (gaCookie.lookupCount+1) + ')retrying jqxhr call...');
+
+          // retry search after 250ms
+          window.setTimeout(gaCookie.processZipNew, 250);
+
+          // increment lookup count (prevents users from getting caught in endless loop)
+          gaCookie.lookupCount++;
+
+        }
+
+      });
+    }
+
+  } catch(e) {
+    // handle error
+  }
+}
 
 
 /* ========================================================================
