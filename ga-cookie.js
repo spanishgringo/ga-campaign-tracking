@@ -535,9 +535,9 @@ gaCookie.processZipNew = function() {
     if($("input[name='zip']").val().length>0){
 
       // call geoNames - YOU MUST CREATE YOUR OWN USERNAME IN PLACE OF THE CURRENT VALUE OF "DEMO"
-      $.getJSON("//api.geonames.org/postalCodeSearchJSON?postalcode="+$("input[name='zip']").val()+"&maxRows=10&username=demo", function(data) {
+      $.getJSON("//api.geonames.org/postalCodeSearchJSON?postalcode="+$("input[name='zip']").val()+"&maxRows=10&username=highfive", function(data) {
 
-        //console.log(data);
+        console.log(data);
 
         // if data not returned
         if(typeof data == 'undefined' || typeof data.status != 'undefined') {
@@ -560,11 +560,22 @@ gaCookie.processZipNew = function() {
         // if data returned
         } else {
 
-          //console.log(data.postalCodes);
+          // remove any existing error notice
           $('.zipError').remove();
+          $("input[name='zip']").removeClass('invalid');
+
+          //console.log(data.postalCodes.length);
+
+          // if no matches found
+          if(data.postalCodes.length == 0) {
+
+            // flag error
+            $("input[name='zip']").addClass('invalid');
+            // notify user
+            $("input[name='zip']").after("<span class='zipError' style='font-size:.85em;display:inline-block;padding-top:5px;'>Are you sure that's a zip code?</span>");
 
           // if only 1 result
-          if(data.postalCodes.length == 1) {
+          } else if(data.postalCodes.length == 1) {
 
             // update form fields            
             $("input[name='country']").val(data.postalCodes[0]['countryCode']);
