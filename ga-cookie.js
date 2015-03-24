@@ -463,81 +463,37 @@ gaCookie.checkAdGroup = function() {
   } catch(e) { }
 };
 
-//test for valid zip/postal codes
-function isValidPostalCode(postalCode, countryCode) {
-    switch (countryCode) {
-        case "US":
-            postalCodeRegex = /^([0-9]{5})(?:[-\s]*([0-9]{4}))?$/;
-            break;
-        case "CA":
-            postalCodeRegex = /^([A-Z][0-9][A-Z])\s*([0-9][A-Z][0-9])$/;
-            break;
-        default:
-            postalCodeRegex = /^(?:[A-Z0-9]+([- ]?[A-Z0-9]+)*)?$/;
-    }
-    return postalCodeRegex.test(postalCode);
-}
-
 // set a lookup count
-gaCookie.lookupCount = 0;
+gaCookie.zipLookupCount = 0;
 
 //function to lookup city, state and country automatically based on zip code.
-//only populates other fields if they are empty. non-destructive.
 gaCookie.processZip = function(){
- try{
-   $("input[name='zip']").on("blur",function(){
-        if($("input[name='zip']").val().length>0){
-            var jQXHR = $.getJSON("//api.zippopotam.us/us/"+$("input[name='zip']").val(),function(data){
-            console.log(data['post code']);
-            console.log(data['country abbreviation']);
-            console.log(data.places[0]['place name']);
-            console.log(data.places[0]['state abbreviation']);
-            $('.zipError').remove();
-
-           // $("input[name='zip']").removeClass('invalid');
-            $("input[name='country']").val().length==0 ? $("input[name='country']").val(data['country abbreviation']) : '';
-            $("input[name='city']").val().length==0 ? $("input[name='city']").val(data.places[0]['place name']) : '';
-            $("input[name='state']").val().length==0 ? $("input[name='state']").val(data.places[0]['state abbreviation']) : '';
-
-            // reset cookie lookup count
-            gaCookie.lookupCount = 0;
-          }).fail(function(){
-
-            // if valid us postal code
-            if( isValidPostalCode($("input[name='zip']").val(),'US') && gaCookie.lookupCount == 0 ) {
-              
-              // retry search after 500ms
-              window.setTimeout(gaCookie.processZip, 500);
-
-              // increment lookup count (prevents users from getting caught in endless loop)
-              gaCookie.lookupCount++;
-              
-            }/*
-            console.log("zip lookup error");
-            //  $("input[name='zip']").addClass('invalid');
-            if(!isValidPostalCode($("input[name='zip']").val())){
-                if($('.zipError').length==0){
-                    $("input[name='zip']").after("<span class='zipError' style='font-size:.85em;display:inline-block;padding-top:5px;'>Are you sure that's a zip code?</span>");
-                }
-            }*/
-          });
-        }
-    });
- }
- catch(e){
- }
+  // activate on zip code field blur
+  $("input[name='zip']").on("blur",function(){
+      gaCookie.doZipLookup();
+  });
+  // check data is filled out on form submit
+  $('form').on('submit', function(e) {
+    // if country field is blank
+    if( $('input[name="country"]').val()=='' ) {
+      // do zip lookup
+      gaCookie.doZipLookup();
+      // cancel form submit
+      e.preventDefault();
+    }
+  });
 }
 
 //function to lookup city, state and country automatically based on zip code.
 //populates hidden fields on blur, will destroy any previously set value.
-gaCookie.processZipNew = function() {
+gaCookie.doZipLookup = function() {
   try{
     if($("input[name='zip']").val().length>0){
 
       // call geoNames - YOU MUST CREATE YOUR OWN USERNAME IN PLACE OF THE CURRENT VALUE OF "DEMO"
-      $.getJSON("//api.geonames.org/postalCodeSearchJSON?postalcode="+$("input[name='zip']").val()+"&maxRows=10&username=highfive", function(data) {
+      $.getJSON("//api.geonames.org/postalCodeSearchJSON?postalcode="+$("input[name='zip']").val()+"&maxRows=10&username=demo", function(data) {
 
-        console.log(data);
+        //console.log(data);
 
         // if data not returned
         if(typeof data == 'undefined' || typeof data.status != 'undefined') {
@@ -545,15 +501,15 @@ gaCookie.processZipNew = function() {
           console.log('zip code lookup returned empty or invalid data...');
 
           // only check 3 times
-          if(gaCookie.lookupCount<3) {
+          if(gaCookie.zipLookupCount<3) {
 
-            console.log('(' + (gaCookie.lookupCount+1) + ')reattempting zip code lookup...');
+            console.log('(' + (gaCookie.zipLookupCount+1) + ')reattempting zip code lookup...');
 
             // retry search after 250ms
-            window.setTimeout(gaCookie.processZipNew, 250);
+            window.setTimeout(gaCookie.doZipLookup, 250);
 
             // increment lookup count (prevents users from getting caught in endless loop)
-            gaCookie.lookupCount++;
+            gaCookie.zipLookupCount++;
 
           }
 
@@ -668,15 +624,15 @@ gaCookie.processZipNew = function() {
         console.log('jqxhr call failed...');
 
         // try again - but only check 3 times
-        if(gaCookie.lookupCount<3) {
+        if(gaCookie.zipLookupCount<3) {
 
-          console.log('(' + (gaCookie.lookupCount+1) + ')retrying jqxhr call...');
+          console.log('(' + (gaCookie.zipLookupCount+1) + ')retrying jqxhr call...');
 
           // retry search after 250ms
-          window.setTimeout(gaCookie.processZipNew, 250);
+          window.setTimeout(gaCookie.doZipLookup, 250);
 
           // increment lookup count (prevents users from getting caught in endless loop)
-          gaCookie.lookupCount++;
+          gaCookie.zipLookupCount++;
 
         }
 
