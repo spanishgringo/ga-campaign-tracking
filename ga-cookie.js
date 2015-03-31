@@ -572,7 +572,7 @@ gaCookie.doZipLookup = function() {
                                 $('<span>').attr({'aria-hidden':'true'})
                               ).html('&times;')
                           ).append(
-                            $('<h4>').attr({'class': 'modal-title'}).text('Please pick a Location')
+                            $('<h4>').attr({'class': 'modal-title'}).text('Please choose a location')
                           )
                         ).append(
                           $('<div>').attr({'class': 'modal-body'}).append( $('<div>').attr({'class': 'list-group'}) )
@@ -596,14 +596,14 @@ gaCookie.doZipLookup = function() {
                   $('#zipModal .modal-body .list-group').append(
                     $('<a>')
                       .attr({'href':'javascript:;','class':'list-group-item','data-zip': JSON.stringify(pc) })
-                      .text( pc['placeName'] + ', ' + pc['adminCode1'] + ' ' + pc['countryCode']  )
+                      .text( pc['placeName'] + ', ' + (pc['adminCode1'] || '--') + ' ' + pc['countryCode'] + ' (' + pc['postalCode'] + ')'  )
                       .on('click', function() {
                         // get place data
                         var placeData = $.parseJSON($(this).attr('data-zip'));
                         // update form fields
                         $("input[name='country']").val(placeData['countryCode']);
                         $("input[name='city']").val(placeData['placeName']);
-                        $("input[name='state']").val(placeData['adminCode1']);
+                        $("input[name='state']").val( (placeData['adminCode1'] || '--') );
                         // close modal
                         $('#zipModal').modal('hide');
                       })
