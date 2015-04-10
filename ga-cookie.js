@@ -93,7 +93,9 @@ if (typeof gaCookie.adGroup == 'undefined') {
   if (gaCookie.cookiesStr.length === 0) {
     return;
   }
-
+  if(gaCookie.rerun) {
+    console.log('gaCookie.rerun is running ' + gaCookie.rerun);
+  }
   // Extract only those cookies for this domain
   // RegEx Pattern to find the __utm cookies only for the right domain hash used by GA
   var rePattern = new RegExp('(__utm[a-z]{1,2}=[0-9]+[^;]*)', "g");
@@ -103,6 +105,13 @@ if (typeof gaCookie.adGroup == 'undefined') {
     gaCookie.cookiesStr = matchedCookies.join(';');
   } else {
     gaCookie.cookiesStr = '';
+    if(!gaCookie.failedCounter){
+      gaCookie.failedCounter = true;
+console.log('gaCookie.failedCounter ' + gaCookie.failedCounter);
+gaCookie.rerun = setTimeout(function(){gaCookie.getVisitData(gaCookie.domainName ? gaCookie.domainName : null);},1200);
+    console.log('gaCookie.rerun post call ' + gaCookie.rerun);
+    return false;
+    }
     return;
   }
   // Split up campaign cookie (_utmz) into individual name=value pairs
@@ -194,7 +203,10 @@ if (typeof gaCookie.adGroup == 'undefined') {
 // gacontent
 
 // You will notice that depending on the medium's value, not all fields are submitted
-gaCookie.getVisitData = function() {
+gaCookie.getVisitData = function(domainNameOverride) {
+  if(domainNameOverride){
+    gaCookie.domainName = domainNameOverride;
+  };
   gaCookie.readGACookies(gaCookie.domainName ? gaCookie.domainName : null);
   // Add values to form
   // Store the landing page from the session
