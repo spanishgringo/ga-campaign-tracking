@@ -78,7 +78,7 @@ if (typeof gaCookie.adGroup == 'undefined') {
 
 }
   // Cycle through each parameter and use default or use override if already set in gaCookie
-  if (intGoogDomainHash === null) {
+  if (typeof intGoogDomainHash == 'undefined') {
     intGoogDomainHash = gaCookie.getDomainHash(gaCookie.getCookie('DomainName', document.location.hostname));
   }
   if (strPrefix) {
@@ -87,7 +87,7 @@ if (typeof gaCookie.adGroup == 'undefined') {
   if (strDefaultDomainName) {
     gaCookie.strDefaultDomainName = strDefaultDomainName;
   }
-  if (gaCookie.cookiesStr == null) {
+  if (typeof gaCookie.cookiesStr == 'undefined') {
     gaCookie.cookiesStr = document.cookie;
   }
   if (gaCookie.cookiesStr.length === 0) {
@@ -201,8 +201,9 @@ gaCookie.getVisitData = function() {
   jQuery('input[name="galandingpage"]').val(gaCookie.landingPage);
 
   // Store the ad group from the session, if any
-  jQuery('input[name="gaadgroup"]').val(gaCookie.adGroup);
-  
+  if( typeof gaCookie.adGroup != 'undefined'){
+      jQuery('input[name="gaadgroup"]').val(gaCookie.adGroup);
+  }
   // Store the GA cookie Data
   switch (gaCookie.params.campaignmedium) {
     case 'organic':
@@ -223,23 +224,28 @@ gaCookie.getVisitData = function() {
       jQuery('input[name="gacampaign"]').val('(referral)');
       jQuery('input[name="gacontent"]').val(gaCookie.params.campaigncontent);
       break;
+      case 'cpc':
+        jQuery('input[name="gamedium"],input[name="leadsource"]').val(gaCookie.prefix + 'cpc');
+        jQuery('input[name="gasource"]').val(gaCookie.params.trafficsource);
+        jQuery('input[name="gacampaign"]').val(gaCookie.params.campaignname);
+        if(gaCookie.params.campaignterm){jQuery('input[name="gakeyword"]').val(gaCookie.params.campaignterm);}
+        if(gaCookie.params.campaigncontent){jQuery('input[name="gacontent"]').val(gaCookie.params.campaigncontent);}
+        if(gaCookie.params.utmgclid){jQuery('input[name="gaadwordsid"]').val(gaCookie.params.utmgclid);}
+      break;
     case '(not set)':
       if (gaCookie.params.utmgclid) {
         // GA Adwords since it has gclid
         jQuery('input[name="gamedium"],input[name="leadsource"]').val(gaCookie.prefix + 'cpc');
+        } else{
+        jQuery('input[name="gamedium"],input[name="leadsource"]').val(gaCookie.prefix + '(not set)');
+        }
         // These may need to be fixed because it depends on gclid on the backend
-        jQuery('input[name="gasource"]').val(gaCookie.params.trafficsource);
-        jQuery('input[name="gacampaign"]').val(gaCookie.params.campaignname);
-        jQuery('input[name="gakeyword"]').val(gaCookie.params.campaignterm);
-        jQuery('input[name="gacontent"]').val(gaCookie.params.campaigncontent);
-        jQuery('input[name="gaadwordsid"]').val(gaCookie.params.utmgclid);
-      } else {
-        jQuery('input[name="gasource"]').val(gaCookie.params.trafficsource);
-        jQuery('input[name="gamedium"],input[name="leadsource"]').val(gaCookie.prefix + gaCookie.params.campaignmedium);
-        jQuery('input[name="gacampaign"]').val(gaCookie.params.campaignname);
-        jQuery('input[name="gakeyword"]').val(gaCookie.params.campaignterm);
-        jQuery('input[name="gacontent"]').val(gaCookie.params.campaigncontent);
-      }
+        if(gaCookie.params.trafficsource){jQuery('input[name="gasource"]').val(gaCookie.params.trafficsource);}
+        if(gaCookie.params.campaignname){jQuery('input[name="gacampaign"]').val(gaCookie.params.campaignname);}
+        if(gaCookie.params.campaignterm){jQuery('input[name="gakeyword"]').val(gaCookie.params.campaignterm);}
+        if(gaCookie.params.campaigncontent){jQuery('input[name="gacontent"]').val(gaCookie.params.campaigncontent);}
+        if(gaCookie.params.utmgclid){jQuery('input[name="gaadwordsid"]').val(gaCookie.params.utmgclid);}
+      
       break;
       case undefined:
         // Referrer is same as host so referrer can't be source or there is no referrer
@@ -255,21 +261,17 @@ gaCookie.getVisitData = function() {
       // Assume it is a custom campaign and try to include everything
       if (gaCookie.params.utmgclid) {
         // GA Adwords since it has gclid
-        jQuery('input[name="gamedium"],input[name="leadsource"]').val(gaCookie.prefix + 'cpc');
+            jQuery('input[name="gamedium"],input[name="leadsource"]').val(gaCookie.prefix + 'cpc');
+            if(gaCookie.params.utmgclid){jQuery('input[name="gaadwordsid"]').val(gaCookie.params.utmgclid);}
+        } else {
+            if(gaCookie.params.campaignmedium){jQuery('input[name="gamedium"],input[name="leadsource"]').val(gaCookie.prefix + gaCookie.params.campaignmedium);}
+        }
         // These may need to be fixed because it depends on gclid on the backend
-        jQuery('input[name="gasource"]').val(gaCookie.params.trafficsource);
-        jQuery('input[name="gacampaign"]').val(gaCookie.params.campaignname);
-        jQuery('input[name="gakeyword"]').val(gaCookie.params.campaignterm);
-        jQuery('input[name="gacontent"]').val(gaCookie.params.campaigncontent);
-        jQuery('input[name="gaadwordsid"]').val(gaCookie.params.utmgclid);
-      } else {
-        jQuery('input[name="gasource"]').val(gaCookie.params.trafficsource);
-        jQuery('input[name="gamedium"],input[name="leadsource"]').val(gaCookie.prefix + gaCookie.params.campaignmedium);
-        jQuery('input[name="gacampaign"]').val(gaCookie.params.campaignname);
-        jQuery('input[name="gakeyword"]').val(gaCookie.params.campaignterm);
-        jQuery('input[name="gacontent"]').val(gaCookie.params.campaigncontent);
-      }
-  }
+        if(gaCookie.params.trafficsource){jQuery('input[name="gasource"]').val(gaCookie.params.trafficsource);}
+        if(gaCookie.params.campaignname){jQuery('input[name="gacampaign"]').val(gaCookie.params.campaignname);}
+        if(gaCookie.params.campaignterm){jQuery('input[name="gakeyword"]').val(gaCookie.params.campaignterm);}
+        if(gaCookie.params.campaigncontent){jQuery('input[name="gacontent"]').val(gaCookie.params.campaigncontent);}
+        }
 };
 
 // Helper functions to place less used session time and count data in your hidden form fields
@@ -482,7 +484,7 @@ gaCookie.processZip = function(){
       e.preventDefault();
     }
   });
-}
+};
 
 //function to lookup city, state and country automatically based on zip code.
 //populates hidden fields on blur, will destroy any previously set value.
@@ -583,7 +585,7 @@ gaCookie.doZipLookup = function() {
                         )
                       )
                     )
-                  )
+                  );
                 // if modal already exists
                 } else {
                   // remove any existing items from the modal list
@@ -642,8 +644,7 @@ gaCookie.doZipLookup = function() {
   } catch(e) {
     // handle error
   }
-}
-
+};
 
 //override for local GA cookie values
 gaCookie.updateUTMZ = function(csr,cmd,ccn,ctr,cct){
@@ -661,31 +662,3 @@ var nodes = newUTMZ.split("|");
   if(cct){  newUTMZ = newUTMZ.replace(/utmcct=(.*?)/,"utmcct=" + cct  );}
   gaCookie.set('__utmz', newUTMZ, this.domainName, '/', 4382);
 };
-
-
-/* ========================================================================
- * Copyright (c) 2008, Adam Vandenberg
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *
- *     * Redistributions of source code must retain the above copyright notice,
- *       this list of conditions and the following disclaimer.
- *
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
- * ======================================================================== */
