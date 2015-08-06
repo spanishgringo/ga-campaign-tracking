@@ -93,9 +93,7 @@ if (typeof gaCookie.adGroup == 'undefined') {
   if (gaCookie.cookiesStr.length === 0) {
     return;
   }
-  if(gaCookie.rerun) {
-    console.log('gaCookie.rerun is running ' + gaCookie.rerun);
-  }
+  
   // Extract only those cookies for this domain
   // RegEx Pattern to find the __utm cookies only for the right domain hash used by GA
   var rePattern = new RegExp('(__utm[a-z]{1,2}=[0-9]+[^;]*)', "g");
@@ -107,9 +105,7 @@ if (typeof gaCookie.adGroup == 'undefined') {
     gaCookie.cookiesStr = '';
     if(!gaCookie.failedCounter){
       gaCookie.failedCounter = true;
-console.log('gaCookie.failedCounter ' + gaCookie.failedCounter);
-gaCookie.rerun = setTimeout(function(){gaCookie.getVisitData(gaCookie.domainName ? gaCookie.domainName : null);},1200);
-    console.log('gaCookie.rerun post call ' + gaCookie.rerun);
+      gaCookie.rerun = setTimeout(function(){gaCookie.getVisitData(gaCookie.domainName ? gaCookie.domainName : null);},1200);
     return false;
     }
     return;
@@ -505,7 +501,7 @@ gaCookie.doZipLookup = function() {
     if($("input[name='zip']").val().length>0){
 
       // call geoNames - YOU MUST CREATE YOUR OWN USERNAME IN PLACE OF THE CURRENT VALUE OF "DEMO"
-      $.getJSON("//api.geonames.org/postalCodeSearchJSON?postalcode="+$("input[name='zip']").val()+"&maxRows=10&username=demo", function(data) {
+      $.getJSON("//ws.geonames.net/postalCodeSearchJSON?postalcode="+$("input[name='zip']").val()+"&maxRows=10&username=highfive", function(data) {
 
         //console.log(data);
 
@@ -655,6 +651,7 @@ gaCookie.doZipLookup = function() {
 
   } catch(e) {
     // handle error
+    console.log('error in doZipLookup: ' + e);
   }
 };
 
