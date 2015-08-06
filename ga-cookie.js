@@ -259,11 +259,14 @@ gaCookie.getVisitData = function(domainNameOverride) {
         // Referrer is same as host so referrer can't be source or there is no referrer
         if (document.referrer === "" || document.referrer.match(/\/\/(.+)\//)[1]==document.location.hostname) {
           jQuery('input[name="gasource"]').val("(not set)");
+          jQuery('input[name="gamedium"],input[name="leadsource"]').val(gaCookie.prefix + '(none)');
         } else {
-          jQuery('input[name="gasource"]').val(document.referrer.match(/\/\/(.+)\//)[1]);
+          var ref = document.referrer.match(/\/\/(.+)\//)[1];
+          jQuery('input[name="gasource"]').val(ref.indexOf("www.")==0 ? ref.substr(4) : ref);
+          jQuery('input[name="gamedium"],input[name="leadsource"]').val(gaCookie.prefix + 'referral');
         }
-        jQuery('input[name="gamedium"],input[name="leadsource"]').val(gaCookie.prefix + 'unknown');
-        jQuery('input[name="gacampaign"]').val('(not set)');
+        
+        jQuery('input[name="gacampaign"],input[name="gacampaign"]').val('(not set)');
       break;
     default:
       // Assume it is a custom campaign and try to include everything
@@ -272,14 +275,18 @@ gaCookie.getVisitData = function(domainNameOverride) {
             jQuery('input[name="gamedium"],input[name="leadsource"]').val(gaCookie.prefix + 'cpc');
             if(gaCookie.params.utmgclid){jQuery('input[name="gaadwordsid"]').val(gaCookie.params.utmgclid);}
         } else {
-            if(gaCookie.params.campaignmedium){jQuery('input[name="gamedium"],input[name="leadsource"]').val(gaCookie.prefix + gaCookie.params.campaignmedium);}
+            if(gaCookie.params.campaignmedium){
+                jQuery('input[name="gamedium"],input[name="leadsource"]').val(gaCookie.prefix + gaCookie.params.campaignmedium);
+        } else{
+            jQuery('input[name="gamedium"],input[name="leadsource"]').val(gaCookie.prefix + '(none)');
+        }
         }
         // These may need to be fixed because it depends on gclid on the backend
         if(gaCookie.params.trafficsource){jQuery('input[name="gasource"]').val(gaCookie.params.trafficsource);}
         if(gaCookie.params.campaignname){jQuery('input[name="gacampaign"]').val(gaCookie.params.campaignname);}
         if(gaCookie.params.campaignterm){jQuery('input[name="gakeyword"]').val(gaCookie.params.campaignterm);}
         if(gaCookie.params.campaigncontent){jQuery('input[name="gacontent"]').val(gaCookie.params.campaigncontent);}
-        }
+    }
 };
 
 // Helper functions to place less used session time and count data in your hidden form fields
